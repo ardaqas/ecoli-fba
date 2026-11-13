@@ -11,5 +11,9 @@ dependencies:
   - scikit-learn
   - jupyterlab
   - ipykernel
+  - nbconvert
+  - pytest
+  - xlrd
   - pip:
       - cobra
+      - -e .

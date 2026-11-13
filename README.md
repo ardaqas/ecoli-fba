@@ -17,16 +17,29 @@ using only network structure and Flux Balance Analysis (FBA)? Where does it fail
 ## Repository structure
 ```
 notebooks/   one notebook per stage
+src/         reusable analysis code (the `ecoli_fba` package)
+tests/       pytest tests for the package
 data/        external data (Keio essentiality list); see data/README.md
 results/     figures and tables
 ```
 
 ## Setup
+With conda:
 ```bash
 conda env create -f environment.yml
 conda activate ecoli-fba
 jupyter lab
 ```
+Or with a plain virtual environment (Python 3.10 or newer):
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+jupyter lab
+```
+Both install the code in `src/ecoli_fba/` as an editable package, so notebooks and tests can `import ecoli_fba`.
+
+Run the tests with `pytest` (fast unit tests) or `pytest -m slow` (full-model tests, need `data/iML1515.json`).
 The first run of `notebooks/01_model_exploration.ipynb` downloads `iML1515.json` from BiGG Models (https://bigg.ucsd.edu/static/models/iML1515.json) into `data/` and needs internet access.
 
 ## Results
