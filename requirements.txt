@@ -1,0 +1,4 @@
+# For plain venv users: pip install -r requirements.txt
+# Installs this repo as an editable package plus the dev tools (pytest, JupyterLab).
+# Dependencies themselves are declared in pyproject.toml.
+-e .[dev]

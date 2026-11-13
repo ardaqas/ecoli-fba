@@ -4,3 +4,6 @@ __pycache__/
 .DS_Store
 .venv/
 data/iML1515.json
+data/raw/
+*.egg-info/
+.pytest_cache/

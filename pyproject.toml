@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecoli-fba"
+version = "0.1.0"
+description = "Gene essentiality prediction in E. coli iML1515 with FBA, validated against the Keio collection"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cobra",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "scikit-learn",
+    "xlrd>=2.0.1",  # pandas needs it to read the .xls supplementary tables
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "jupyterlab",
+    "ipykernel",
+    "nbconvert",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: runs on the full iML1515 model (needs data/iML1515.json); select with `-m slow`",
+]
+# Fast tests by default; `pytest -m slow` overrides this and runs the full-model tests.
+addopts = "-m 'not slow'"
