@@ -13,11 +13,15 @@ def test_gpr_structure_of_toy_genes(toy_model):
     assert table.loc["g2a", "has_backup"]
     assert not table.loc["g2a", "in_complex"]
     assert table.loc["g2a", "subsystems"] == "Pathway X"
+    assert table.loc["g2a", "backup_genes"] == "g2b"
+    assert table.loc["g2a", "lost_reactions"] == ""
 
     # complex subunits: losing either one kills the reaction
     assert table.loc["g3a", "n_reactions_lost"] == 1
     assert not table.loc["g3a", "has_backup"]
     assert table.loc["g3a", "in_complex"]
+    assert table.loc["g3a", "lost_reactions"] == "R3"
+    assert table.loc["g3a", "backup_genes"] == ""
 
     # single gene with a parallel reaction: its own reaction is lost,
     # the backup is a different reaction, not an isozyme

@@ -11,6 +11,8 @@ import cobra
 import pandas as pd
 from cobra.util.solver import linear_reaction_coefficients
 
+from ecoli_fba.knockout import DEFAULT_THRESHOLD
+
 
 def biomass_reaction(model: cobra.Model) -> cobra.Reaction:
     """The reaction the model currently maximises."""
@@ -52,3 +54,46 @@ def blocked_biomass_precursors(
                 }
             )
     return pd.DataFrame(rows, columns=["gene_id", "n_blocked", "blocked_precursors"])
+
+
+def single_nutrient_rescue(
+    model: cobra.Model,
+    genes: Iterable[str],
+    uptake: float = 10.0,
+    threshold: float = DEFAULT_THRESHOLD,
+) -> pd.DataFrame:
+    """For each gene, the single extra nutrients that let its knockout grow.
+
+    Every exchange reaction that is closed in the current medium is opened in
+    turn (one at a time, up to ``uptake``) and the knockout is simulated
+    again. A nutrient "rescues" the knockout if growth reaches ``threshold``
+    times the wild-type growth on the unsupplemented medium.
+
+    A rescue shows what the knockout is missing. Whether the cells in the
+    experiment really had access to that compound is a separate question.
+
+    Returns one row per gene with ``n_rescuing`` and ``rescuing_nutrients``
+    (``"; "``-separated exchange reaction IDs).
+    """
+    wild_type = model.slim_optimize(error_value=0.0)
+    if wild_type <= 0:
+        raise ValueError("wild type does not grow on this medium")
+    closed = [r for r in model.exchanges if r.lower_bound >= 0]
+    rows = []
+    for gene_id in genes:
+        rescuing = []
+        with model:
+            model.genes.get_by_id(gene_id).knock_out()
+            for exchange in closed:
+                exchange.lower_bound = -uptake
+                if model.slim_optimize(error_value=0.0) >= threshold * wild_type:
+                    rescuing.append(exchange.id)
+                exchange.lower_bound = 0.0
+        rows.append(
+            {
+                "gene_id": gene_id,
+                "n_rescuing": len(rescuing),
+                "rescuing_nutrients": "; ".join(rescuing),
+            }
+        )
+    return pd.DataFrame(rows, columns=["gene_id", "n_rescuing", "rescuing_nutrients"])

@@ -27,8 +27,11 @@ def annotate_genes(model: cobra.Model, genes: Iterable[str] | None = None) -> pd
         gene_name          common name, e.g. ``thrA``
         n_reactions        reactions whose rule mentions the gene
         n_reactions_lost   reactions that stop working when only this gene is deleted
+        lost_reactions     IDs of those reactions, ``"; "``-separated
         has_backup         at least one of its reactions survives the deletion
                            (an isozyme or alternative complex takes over)
+        backup_genes       names of the other genes in the rules of the
+                           surviving reactions, i.e. the candidates that take over
         in_complex         the gene is a subunit of a protein complex (``and``)
         subsystems         model pathways of its reactions, ``"; "``-separated
     """
@@ -38,13 +41,16 @@ def annotate_genes(model: cobra.Model, genes: Iterable[str] | None = None) -> pd
         gene = model.genes.get_by_id(gene_id)
         reactions = sorted(gene.reactions, key=lambda r: r.id)
         lost = [r for r in reactions if not r.gpr.eval(knockouts={gene_id})]
+        backups = {g.name or g.id for r in reactions if r not in lost for g in r.genes if g.id != gene_id}
         rows.append(
             {
                 "gene_id": gene_id,
                 "gene_name": gene.name,
                 "n_reactions": len(reactions),
                 "n_reactions_lost": len(lost),
+                "lost_reactions": "; ".join(r.id for r in lost),
                 "has_backup": len(lost) < len(reactions),
+                "backup_genes": "; ".join(sorted(backups)),
                 "in_complex": any(gene_id in _genes_in_complexes(r) for r in reactions),
                 "subsystems": "; ".join(sorted({r.subsystem for r in reactions if r.subsystem})),
             }

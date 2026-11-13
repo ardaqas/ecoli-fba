@@ -43,3 +43,23 @@ def test_model_is_left_unchanged(two_precursor_model):
     assert errors.biomass_reaction(two_precursor_model).id == "BIOMASS"
     assert two_precursor_model.slim_optimize() == pytest.approx(growth)
     assert all(g.functional for g in two_precursor_model.genes)
+
+
+def test_single_nutrient_rescue_matches_hand_derivation(toy_model):
+    table = errors.single_nutrient_rescue(toy_model, ["gT", "g3a"]).set_index("gene_id")
+
+    # C enters downstream of the A transporter, so it rescues gT ...
+    assert table.loc["gT", "rescuing_nutrients"] == "EX_C_e"
+    assert table.loc["gT", "n_rescuing"] == 1
+    # ... but not g3a, which acts after C.
+    assert table.loc["g3a", "rescuing_nutrients"] == ""
+    assert table.loc["g3a", "n_rescuing"] == 0
+
+
+def test_rescue_screen_leaves_medium_unchanged(toy_model):
+    before = dict(toy_model.medium)
+
+    errors.single_nutrient_rescue(toy_model, ["gT"])
+
+    assert toy_model.medium == before
+    assert all(g.functional for g in toy_model.genes)
