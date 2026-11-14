@@ -1,0 +1,7 @@
+outcome,evidence_group,B: LB-like,C: glucose minimal
+FP,deletion strain keeps an intact gene copy (Yamamoto 2009),6,6
+FP,one extra nutrient restores growth in the model,14,22
+FP,no single nutrient restores growth in the model,9,6
+FN,another gene can catalyse all of its reactions,10,17
+FN,"reactions lost, model reroutes with slower growth",3,10
+FN,"reactions lost, model growth unaffected",20,25

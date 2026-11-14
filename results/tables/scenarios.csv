@@ -1,0 +1,7 @@
+scenario,TP,FP,FN,precision,recall,mcc,errors resolved,new errors
+B: LB-like (baseline),87,29,33,0.75,0.725,0.7151,,
+C: glucose minimal (baseline),161,34,52,0.8256,0.7559,0.7573,,
+"C1: + thiamin, biotin, nicotinate, pantothenate",148,22,65,0.8706,0.6948,0.7465,"bioA, fabH, nadB, nadC, thiC, thiD, thiE, thiF, thiG, thiH, thiI, thiS","bioB, bioC, bioD, bioF, bioH, fabB, fabI, fabZ, iscS, nadA, panB, panC, panD"
+C2: + taurine (sulfonate),160,30,53,0.8421,0.7512,0.7641,"cysC, cysD, cysN, cysQ",cysH
+C3: GHMT2r irreversible,164,34,49,0.8283,0.77,0.7669,"serA, serB, serC",
+"B1: + biotin, L-glutamine",84,21,36,0.8,0.7,0.7282,"bioA, bioB, bioC, bioD, bioF, bioH, fabH, glnA","fabB, fabI, fabZ"
