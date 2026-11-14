@@ -46,7 +46,7 @@ ded72d1f890d47b0544fa52edcb491b187a010fa6b938437fc04418e08e31638  msb4100050-s8.
 ```
 
 The raw tables stay out of the repository because the 2006 article carries a
-publisher copyright notice and no open licence statement that I could find.
+publisher copyright notice and no open licence statement.
 
 ## How the labels are defined
 

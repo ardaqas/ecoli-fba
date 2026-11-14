@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 from cobra import Metabolite, Reaction
 
@@ -63,3 +64,35 @@ def test_rescue_screen_leaves_medium_unchanged(toy_model):
 
     assert toy_model.medium == before
     assert all(g.functional for g in toy_model.genes)
+
+
+def test_false_positive_groups_and_precedence():
+    table = pd.DataFrame(
+        {
+            "duplication_2009": [True, True, False, False],
+            "n_rescuing": [0, 3, 2, 0],
+        }
+    )
+
+    assert errors.group_false_positives(table).tolist() == [
+        errors.FP_DUPLICATION,
+        errors.FP_DUPLICATION,  # a doubtful label outranks a rescue
+        errors.FP_RESCUED,
+        errors.FP_UNRESCUED,
+    ]
+
+
+def test_false_negative_groups_and_precedence():
+    table = pd.DataFrame(
+        {
+            "n_reactions_lost": [0, 0, 2, 1],
+            "growth_ratio": [1.0, 0.5, 0.5, 1.0],
+        }
+    )
+
+    assert errors.group_false_negatives(table).tolist() == [
+        errors.FN_BACKUP_GENE,
+        errors.FN_BACKUP_GENE,
+        errors.FN_REROUTED_COST,
+        errors.FN_REROUTED_FREE,
+    ]

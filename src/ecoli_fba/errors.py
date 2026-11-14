@@ -97,3 +97,41 @@ def single_nutrient_rescue(
             }
         )
     return pd.DataFrame(rows, columns=["gene_id", "n_rescuing", "rescuing_nutrients"])
+
+
+# Evidence groups. They describe what the model and the data show for a
+# mispredicted gene; they are not a verdict on the biological cause.
+FP_DUPLICATION = "deletion strain keeps an intact gene copy (Yamamoto 2009)"
+FP_RESCUED = "one extra nutrient restores growth in the model"
+FP_UNRESCUED = "no single nutrient restores growth in the model"
+FP_GROUPS = (FP_DUPLICATION, FP_RESCUED, FP_UNRESCUED)
+
+FN_BACKUP_GENE = "another gene can catalyse all of its reactions"
+FN_REROUTED_COST = "reactions lost, model reroutes with slower growth"
+FN_REROUTED_FREE = "reactions lost, model growth unaffected"
+FN_GROUPS = (FN_BACKUP_GENE, FN_REROUTED_COST, FN_REROUTED_FREE)
+
+UNAFFECTED_RATIO = 0.99
+
+
+def group_false_positives(table: pd.DataFrame) -> pd.Series:
+    """Evidence group of each false positive (model: essential, mutant viable).
+
+    Needs the columns ``duplication_2009`` and ``n_rescuing``. The duplication
+    flag takes precedence because it questions the label itself.
+    """
+    group = pd.Series(FP_UNRESCUED, index=table.index, name="evidence_group")
+    group[table["n_rescuing"] > 0] = FP_RESCUED
+    group[table["duplication_2009"].astype(bool)] = FP_DUPLICATION
+    return group
+
+
+def group_false_negatives(table: pd.DataFrame) -> pd.Series:
+    """Evidence group of each false negative (model: dispensable, no viable mutant).
+
+    Needs the columns ``n_reactions_lost`` and ``growth_ratio``.
+    """
+    group = pd.Series(FN_REROUTED_FREE, index=table.index, name="evidence_group")
+    group[table["growth_ratio"] < UNAFFECTED_RATIO] = FN_REROUTED_COST
+    group[table["n_reactions_lost"] == 0] = FN_BACKUP_GENE
+    return group
