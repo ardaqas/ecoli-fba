@@ -30,8 +30,9 @@ The project does not stop at a score. Every gene for which model and experiment 
 7. [What-if scenarios](#what-if-scenarios)
 8. [Limitations](#limitations)
 9. [Key takeaways](#key-takeaways)
-10. [Reproducing the analysis](#reproducing-the-analysis)
-11. [References](#references)
+10. [What I learned](#what-i-learned)
+11. [Reproducing the analysis](#reproducing-the-analysis)
+12. [References](#references)
 
 ## At a glance
 
@@ -279,7 +280,14 @@ These limitations define the scope of the conclusions; most are inherent to cons
 - False negatives point to what FBA leaves out: isoenzymes that are present in the gene rules but not usable in the cell, routes that are stoichiometrically possible but apparently not physiologically sufficient (*glyA*), questionable reaction directions (GHMT2r), and essential functions outside metabolism (*spoT*).
 - In-silico scenarios are useful for testing such hypotheses, but each fix has side effects on other genes; reporting them next to an unchanged baseline keeps the evaluation honest.
 
-<!-- What I learned: reserved for the author. -->
+## What I learned
+
+- **A score means little without matched conditions.** Changing only the label, from rich-medium to minimal-medium essentiality, moved the MCC of the same predictions from 0.54 to 0.76, more than any parameter of the model did.
+- **Metrics have to fit the class balance.** With 8 to 14 % essential genes, the mismatched comparison still reached an accuracy of 0.909, slightly below the 0.920 obtained by calling every gene non-essential. Precision, recall and MCC are the numbers that show what a model can do.
+- **Gene rules describe what is possible, not what happens.** Many false negatives trace back to isoenzymes the cell cannot use in glucose minimal medium, such as the vitamin B12-dependent MetH, or to routes that are stoichiometrically possible but apparently insufficient, as in the *glyA* case study.
+- **Experimental labels are data with their own errors.** Six apparent model errors are deletion strains that still carry the gene, and several others sit right at the no-growth cut-off. Reading the methods of the experimental paper is part of the analysis: the minimal-medium cultures were inoculated directly from LB, which matters for the thiamin results.
+- **An error is most useful as a hypothesis.** Sorting the errors by evidence and testing each idea as a scenario showed that every fix also creates new errors, so the unchanged baseline has to remain the result.
+- **Reproducibility has to be built in from the start.** Checksummed downloads, a hand-checkable toy model, parser tests against the numbers in the paper and a clean rerun that reproduced every table byte for byte are what make the results defensible.
 
 ## Reproducing the analysis
 
