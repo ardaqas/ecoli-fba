@@ -1,0 +1,4 @@
+comparison,n_genes,n_observed_essential,n_predicted_essential,TP,FP,FN,TN,accuracy,precision,recall,specificity,balanced_accuracy,f1,mcc
+A: glucose minimal vs LB labels (mismatched),1508.0,120.0,195.0,89.0,106.0,31.0,1282.0,0.9092,0.4564,0.7417,0.9236,0.8326,0.5651,0.5366
+B: LB-like vs LB labels,1508.0,120.0,116.0,87.0,29.0,33.0,1359.0,0.9589,0.75,0.725,0.9791,0.8521,0.7373,0.7151
+C: glucose minimal vs glucose labels,1508.0,213.0,195.0,161.0,34.0,52.0,1261.0,0.943,0.8256,0.7559,0.9737,0.8648,0.7892,0.7573
